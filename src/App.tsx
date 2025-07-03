@@ -704,8 +704,8 @@ function App() {
                   style={{
                     scrollbarWidth: 'thin',
                     scrollbarColor: '#ff6b6b #f1f1f1',
-                    fontSize: '14px',
-                    lineHeight: '1.4'
+                    fontSize: '12px',
+                    lineHeight: '1.3'
                   }}
                 >
                   <p>Oyee Chuiyaa,</p>
@@ -721,7 +721,7 @@ function App() {
                   <p>Agar tune party nahi di toh mai teri fielding set kerwa dunga ... 🤣🤣🤣</p>
                   <br />
                   <div style={{ 
-                    fontSize: '12px', 
+                    fontSize: '10px', 
                     color: '#888', 
                     textAlign: 'center', 
                     marginTop: '15px',
