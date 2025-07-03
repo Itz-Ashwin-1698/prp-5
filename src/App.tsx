@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Heart, Sparkles, Gift } from 'lucide-react';
 
 function App() {
-  const [stage, setStage] = useState<'countdown' | 'spotlight' | 'curtains' | 'reveal' | 'birthday' | 'surprise' | 'card'>('countdown');
+  const [stage, setStage] = useState<'countdown' | 'spotlight' | 'curtains' | 'reveal' | 'birthday' | 'surprise' | 'card' | 'exit'>('countdown');
   const [countdown, setCountdown] = useState(5);
   const [showRat, setShowRat] = useState(false);
   const [showSpeechBubble, setShowSpeechBubble] = useState(false);
@@ -56,7 +56,7 @@ function App() {
       });
     };
 
-    if (stage === 'birthday' || stage === 'surprise' || stage === 'card') {
+    if (stage === 'birthday' || stage === 'surprise' || stage === 'card' || stage === 'exit') {
       window.addEventListener('mousemove', handleMouseMove);
       return () => window.removeEventListener('mousemove', handleMouseMove);
     }
@@ -118,7 +118,7 @@ function App() {
 
   // Enhanced Sparkle Particles Background
   useEffect(() => {
-    if (((stage === 'birthday' || stage === 'surprise' || stage === 'card') && sparkleCanvasRef.current) || (showExitSequence && sparkleCanvasRef.current)) {
+    if ((stage === 'birthday' || stage === 'surprise' || stage === 'card' || stage === 'exit') && sparkleCanvasRef.current) {
       const canvas = sparkleCanvasRef.current;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
@@ -185,11 +185,11 @@ function App() {
         }
       };
     }
-  }, [stage, showExitSequence]);
+  }, [stage]);
 
   // Enhanced Confetti animation
   useEffect(() => {
-    if (((stage === 'birthday' || stage === 'surprise' || stage === 'card') && showConfetti && confettiCanvasRef.current) || (showExitSequence && showConfetti && confettiCanvasRef.current)) {
+    if ((stage === 'birthday' || stage === 'surprise' || stage === 'card' || stage === 'exit') && showConfetti && confettiCanvasRef.current) {
       const canvas = confettiCanvasRef.current;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
@@ -254,11 +254,11 @@ function App() {
         }
       };
     }
-  }, [stage, showConfetti, showExitSequence]);
+  }, [stage, showConfetti]);
 
   // Enhanced Fireworks animation with sparkle bursts
   useEffect(() => {
-    if (((stage === 'birthday' || stage === 'surprise' || stage === 'card') && showFireworks && fireworksCanvasRef.current) || (showExitSequence && showFireworks && fireworksCanvasRef.current)) {
+    if ((stage === 'birthday' || stage === 'surprise' || stage === 'card' || stage === 'exit') && showFireworks && fireworksCanvasRef.current) {
       const canvas = fireworksCanvasRef.current;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
@@ -402,7 +402,7 @@ function App() {
         }
       };
     }
-  }, [stage, showFireworks, showExitSequence]);
+  }, [stage, showFireworks]);
 
   useEffect(() => {
     // Countdown stage
@@ -584,7 +584,7 @@ function App() {
 
   // New exit click handler
   const handleExitClick = () => {
-    setShowExitSequence(true);
+    setStage('exit');
     setShowConfetti(true);
     setShowFireworks(true);
     setShowRat(true);
@@ -611,7 +611,6 @@ function App() {
     setTimeout(() => {
       setShowRat(false);
       setShowFinalRatSpeech(false);
-      setShowExitSequence(false);
     }, 15000);
   };
 
@@ -627,11 +626,11 @@ function App() {
   return (
     <div 
       className={`min-h-screen relative overflow-hidden ${
-        stage === 'birthday' || stage === 'surprise' || stage === 'card' ? 'birthday-magical-background' : 
+        stage === 'birthday' || stage === 'surprise' || stage === 'card' || stage === 'exit' ? 'birthday-magical-background' : 
         stage === 'surprise' ? 'bg-black' : 'bg-black'
       }`} 
       onClick={enableAudio}
-      style={(stage === 'birthday' || stage === 'surprise' || stage === 'card') ? {
+      style={(stage === 'birthday' || stage === 'surprise' || stage === 'card' || stage === 'exit') ? {
         background: `linear-gradient(135deg at ${mousePosition.x}% ${mousePosition.y}%, 
           #ffecd2 0%, 
           #fcb69f 25%, 
@@ -645,9 +644,15 @@ function App() {
         <div className="film-grain"></div>
       </div>
 
-      {/* Final Celebration Exit Sequence */}
-      {showExitSequence && (
+      {/* Exit Stage - Final Celebration */}
+      {stage === 'exit' && (
         <>
+          {/* Sparkle Particles Canvas */}
+          <canvas
+            ref={sparkleCanvasRef}
+            className="fixed top-0 left-0 w-full h-full pointer-events-none z-10"
+          />
+
           {/* Confetti Canvas for Exit Sequence */}
           {showConfetti && (
             <canvas
