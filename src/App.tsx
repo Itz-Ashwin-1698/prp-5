@@ -35,9 +35,6 @@ function App() {
   const fireworksAnimationRef = useRef<number>();
   const sparkleAnimationRef = useRef<number>();
 
-  // Message container ref for scrolling
-  const messageRef = useRef<HTMLDivElement>(null);
-
   // Audio refs
   const countdownAudioRef = useRef<HTMLAudioElement | null>(null);
   const ratEntranceAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -60,13 +57,6 @@ function App() {
       return () => window.removeEventListener('mousemove', handleMouseMove);
     }
   }, [stage]);
-
-  // Reset message scroll position when card is flipped to show message
-  useEffect(() => {
-    if (cardFlipped && messageRef.current) {
-      messageRef.current.scrollTop = 0;
-    }
-  }, [cardFlipped]);
 
   // Initialize audio
   useEffect(() => {
@@ -684,30 +674,24 @@ function App() {
                 transform: 'rotateY(180deg)',
                 display: 'flex',
                 flexDirection: 'column',
-                padding: '15px'
+                padding: '20px'
               }}
             >
-              <div className="card-header" style={{ marginBottom: '10px' }}>
+              <div className="card-header" style={{ marginBottom: '15px' }}>
                 <h1 className="card-title" style={{ fontSize: '28px', marginBottom: '5px' }}>Happy Birthday!</h1>
                 <div className="card-subtitle" style={{ fontSize: '20px' }}>Chuiyaa</div>
               </div>
               
               <div className="card-content" style={{ 
-                flexGrow: 1, 
-                overflowY: 'auto',
-                paddingRight: '10px',
-                maxHeight: '380px'
+                flexGrow: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center'
               }}>
-                <div 
-                  ref={messageRef}
-                  className="card-message" 
-                  style={{
-                    scrollbarWidth: 'thin',
-                    scrollbarColor: '#ff6b6b #f1f1f1',
-                    fontSize: '12px',
-                    lineHeight: '1.3'
-                  }}
-                >
+                <div className="card-message" style={{
+                  fontSize: '10px',
+                  lineHeight: '1.2'
+                }}>
                   <p>Oyee Chuiyaa,</p>
                   <br />
                   <p>Happy wala birthday yaar... Haa pata hai ki yeh sab bhot jayda ho gya hoga.. par kerna tha tune bhi toh meri bhot help ki thi.. Jab mai bhot jayda demotivated ho gya tha.. Tune maturity se handle kiya tha.. Mai uske liye bhot jayda thankful huu..</p>
@@ -719,27 +703,7 @@ function App() {
                   <p>Haa abb party degi tu.. Itni mahanet ki hai maine...</p>
                   <br />
                   <p>Agar tune party nahi di toh mai teri fielding set kerwa dunga ... 🤣🤣🤣</p>
-                  <br />
-                  <div style={{ 
-                    fontSize: '10px', 
-                    color: '#888', 
-                    textAlign: 'center', 
-                    marginTop: '15px',
-                    fontStyle: 'italic'
-                  }}>
-                    ↕️ Scroll to read more
-                  </div>
                 </div>
-              </div>
-              
-              <div style={{
-                textAlign: 'center',
-                marginTop: '10px',
-                fontSize: '16px',
-                fontWeight: 'bold',
-                color: '#ff6b6b'
-              }}>
-                - Your Friend
               </div>
             </div>
             
