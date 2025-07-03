@@ -26,6 +26,10 @@ function App() {
   const [showSurpriseSpotlight, setShowSurpriseSpotlight] = useState(false);
   const [showCardButton, setShowCardButton] = useState(false);
   const [cardFlipped, setCardFlipped] = useState(false);
+  
+  // New state variables for exit sequence
+  const [showExitSequence, setShowExitSequence] = useState(false);
+  const [showFinalRatSpeech, setShowFinalRatSpeech] = useState(false);
 
   // Canvas refs for effects
   const confettiCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -114,7 +118,7 @@ function App() {
 
   // Enhanced Sparkle Particles Background
   useEffect(() => {
-    if ((stage === 'birthday' || stage === 'surprise' || stage === 'card') && sparkleCanvasRef.current) {
+    if (((stage === 'birthday' || stage === 'surprise' || stage === 'card') && sparkleCanvasRef.current) || (showExitSequence && sparkleCanvasRef.current)) {
       const canvas = sparkleCanvasRef.current;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
@@ -181,11 +185,11 @@ function App() {
         }
       };
     }
-  }, [stage]);
+  }, [stage, showExitSequence]);
 
   // Enhanced Confetti animation
   useEffect(() => {
-    if ((stage === 'birthday' || stage === 'surprise' || stage === 'card') && showConfetti && confettiCanvasRef.current) {
+    if (((stage === 'birthday' || stage === 'surprise' || stage === 'card') && showConfetti && confettiCanvasRef.current) || (showExitSequence && showConfetti && confettiCanvasRef.current)) {
       const canvas = confettiCanvasRef.current;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
@@ -250,11 +254,11 @@ function App() {
         }
       };
     }
-  }, [stage, showConfetti]);
+  }, [stage, showConfetti, showExitSequence]);
 
   // Enhanced Fireworks animation with sparkle bursts
   useEffect(() => {
-    if ((stage === 'birthday' || stage === 'surprise' || stage === 'card') && showFireworks && fireworksCanvasRef.current) {
+    if (((stage === 'birthday' || stage === 'surprise' || stage === 'card') && showFireworks && fireworksCanvasRef.current) || (showExitSequence && showFireworks && fireworksCanvasRef.current)) {
       const canvas = fireworksCanvasRef.current;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
@@ -398,7 +402,7 @@ function App() {
         }
       };
     }
-  }, [stage, showFireworks]);
+  }, [stage, showFireworks, showExitSequence]);
 
   useEffect(() => {
     // Countdown stage
@@ -578,6 +582,39 @@ function App() {
     setCardFlipped(!cardFlipped);
   };
 
+  // New exit click handler
+  const handleExitClick = () => {
+    setShowExitSequence(true);
+    setShowConfetti(true);
+    setShowFireworks(true);
+    setShowRat(true);
+    setShowFinalRatSpeech(true);
+    
+    // Play rat entrance sound for final appearance
+    if (ratEntranceAudioRef.current) {
+      ratEntranceAudioRef.current.play().catch(() => {
+        console.log('Audio play failed');
+      });
+    }
+    
+    // Hide confetti after 10 seconds
+    setTimeout(() => {
+      setShowConfetti(false);
+    }, 10000);
+    
+    // Hide fireworks after 10 seconds
+    setTimeout(() => {
+      setShowFireworks(false);
+    }, 10000);
+    
+    // Hide rat and speech after 15 seconds (end of celebration)
+    setTimeout(() => {
+      setShowRat(false);
+      setShowFinalRatSpeech(false);
+      setShowExitSequence(false);
+    }, 15000);
+  };
+
   // Enable audio on first user interaction
   const enableAudio = () => {
     [countdownAudioRef, ratEntranceAudioRef, curtainOpenAudioRef, birthdayMusicRef, blowCandlesAudioRef, glitchAudioRef].forEach(ref => {
@@ -607,6 +644,102 @@ function App() {
       <div className="absolute inset-0 opacity-20 pointer-events-none">
         <div className="film-grain"></div>
       </div>
+
+      {/* Final Celebration Exit Sequence */}
+      {showExitSequence && (
+        <>
+          {/* Confetti Canvas for Exit Sequence */}
+          {showConfetti && (
+            <canvas
+              ref={confettiCanvasRef}
+              className="fixed top-0 left-0 w-full h-full pointer-events-none z-40"
+            />
+          )}
+
+          {/* Fireworks Canvas for Exit Sequence */}
+          {showFireworks && (
+            <canvas
+              ref={fireworksCanvasRef}
+              className="fixed top-0 left-0 w-full h-full pointer-events-none z-45"
+            />
+          )}
+
+          {/* Final Rat Celebration */}
+          {showRat && showFinalRatSpeech && (
+            <div 
+              className="final-celebration-rat-container"
+              style={{
+                position: 'fixed',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                zIndex: 100,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center'
+              }}
+            >
+              <img 
+                src="/chuiya-rat.png" 
+                alt="Cute Chuiya rat character" 
+                className="rat-image"
+                style={{
+                  width: '150px',
+                  height: '150px',
+                  animation: 'bounce 2s infinite'
+                }}
+              />
+              
+              {/* Final Speech Bubble */}
+              <div 
+                className="final-rat-speech-bubble"
+                style={{
+                  position: 'relative',
+                  background: 'linear-gradient(135deg, #ff6b6b, #4ecdc4)',
+                  color: 'white',
+                  padding: '20px 30px',
+                  borderRadius: '25px',
+                  marginTop: '20px',
+                  fontSize: '24px',
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                  animation: 'pulse 2s infinite',
+                  maxWidth: '400px'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                  <Sparkles size={24} />
+                  <span>Happy Wala Birthday Chuiya!</span>
+                  <Sparkles size={24} />
+                </div>
+                
+                {/* Speech bubble tail */}
+                <div 
+                  style={{
+                    position: 'absolute',
+                    top: '-10px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '0',
+                    height: '0',
+                    borderLeft: '15px solid transparent',
+                    borderRight: '15px solid transparent',
+                    borderBottom: '15px solid #ff6b6b'
+                  }}
+                />
+              </div>
+
+              {/* Magic sparkles around final rat */}
+              <div className="magic-sparkles celebration">
+                {[...Array(12)].map((_, i) => (
+                  <div key={i} className={`sparkle sparkle-celebration-${i}`}>✨</div>
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      )}
 
       {/* TV Glitch Effect */}
       {showTVGlitch && (
@@ -714,6 +847,43 @@ function App() {
               ))}
             </div>
           </div>
+
+          {/* Exit Button - positioned to the right of the card */}
+          <button 
+            onClick={handleExitClick}
+            style={{
+              position: 'absolute',
+              right: 'calc(50% - 350px - 120px)',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              zIndex: 101,
+              background: 'linear-gradient(45deg, #ff4757, #ff6b6b, #ff7675, #fd79a8)',
+              backgroundSize: '300% 300%',
+              animation: 'gradientShift 3s ease infinite',
+              border: 'none',
+              padding: '20px 25px',
+              borderRadius: '50px',
+              color: 'white',
+              fontWeight: 'bold',
+              fontSize: '18px',
+              cursor: 'pointer',
+              boxShadow: '0 10px 30px rgba(255, 71, 87, 0.4)',
+              transition: 'all 0.3s ease',
+              textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+              minWidth: '100px',
+              textAlign: 'center'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-50%) translateX(-5px) scale(1.1)';
+              e.currentTarget.style.boxShadow = '0 15px 40px rgba(255, 71, 87, 0.6)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(-50%) translateX(0) scale(1)';
+              e.currentTarget.style.boxShadow = '0 10px 30px rgba(255, 71, 87, 0.4)';
+            }}
+          >
+            🎉 Exit 🎉
+          </button>
 
           {/* Flip Button */}
           <button 
